@@ -8,3 +8,6 @@ goal of this project is to create an Amazon-like bookmarket where you pay with E
     - flask
     - web3.py
 - metamask
+
+
+
