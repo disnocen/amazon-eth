@@ -7,7 +7,9 @@
 <body>
     this is booklist of titles from the database
     {% for book in bookdata %}
-        <li>{{ book.title }}</li>
+
+    <li>{{ book.author }} - <a href="/bookinfo/{{ book.isbn }}">{{
+            book.title }}</a></li>
     {% endfor %}
 </body>
 </html>

@@ -1,0 +1,79 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ title }}</title>
+    </head>
+    <body>
+    <h1>{{ title }}</h1>
+    <p>{{ author }}</p>
+    <p>Price is: {{ price }} ETH</p>
+    <img src="{{ front_cover }}" alt="front cover of {{ title }}">
+    
+<button id="enableMetamask" onclick="metaconnect()">Connect to Metamask</button>
+<button id="payWithMetamask" onclick="buyBook()">Pay with Metamask</button>
+    </body>
+<script>
+
+    // connect to the metamask extension
+    function handleAccountsChanged(accounts) {
+            console.log('Calling HandleChanged')
+            
+            if (accounts.length === 0) {
+                console.log('Please connect to MetaMask.');
+                $('#enableMetamask').html('Connect with Metamask')
+            } else if (accounts[0] !== currentAccount) {
+                let currentAccount = accounts[0];
+                $('#enableMetamask').html(currentAccount)
+                $('#status').html('')
+                
+                if(currentAccount != null) {
+                    // Set the button label
+                    $('#enableMetamask').html(currentAccount)
+                }
+            }
+            console.log('WalletAddress in HandleAccountChanged ='+walletAddress)
+        }
+
+    function metaconnect() {
+            connect();
+            changeButtonLabel();
+        }
+
+    function connect() {
+            console.log('Calling connect()')
+            ethereum
+            .request({ method: 'eth_requestAccounts' })
+            .then(handleAccountsChanged)
+            .catch((err) => {
+            if (err.code === 4001) {
+                // EIP-1193 userRejectedRequest error
+                // If this happens, the user rejected the connection request.
+                console.log('Please connect to MetaMask.');
+                $('#status').html('You refused to connect Metamask')
+            } else {
+                console.error(err);
+            }
+            });
+        }
+    function changeButtonLabel() {
+        document.getElementById("enableMetamask").innerHTML = "Connected to Metamask";
+        // document.getElementById("enableMetamask").style.display = "none";
+    }
+    </script>
+    <script>
+     async function buyBook() {
+        const accounts = await ethereum.request({method: 'eth_requestAccounts'});
+        const account = accounts[0];
+        const transactionParameters = {
+            from: ethereum.selectedAddress, // must match user's active address.
+            to: '0x625360188f2CdC5C4C9f86c1d39b8B1B9437D6c7', // Required except during contract publications.
+            value: '{{ price_hex }}', // in wei
+                };
+        txHash = await ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [transactionParameters]
+        });
+    }
+    </script>
+    </html>
